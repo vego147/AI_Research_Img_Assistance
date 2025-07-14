@@ -1,0 +1,24 @@
+# Ignore environment variables and secrets
+.env
+
+# Ignore Python cache
+__pycache__/
+*.py[cod]
+
+# Ignore Jupyter notebook checkpoints
+.ipynb_checkpoints/
+
+# Ignore VSCode settings (if applicable)
+.vscode/
+
+# Ignore generated image
+generated_image.jpg
+
+# Ignore vector DB folder
+vector_store/
+
+# Ignore system files
+Thumbs.db
+.DS_Store
+
+deep_research/open_deep_research/
