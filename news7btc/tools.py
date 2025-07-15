@@ -1,7 +1,11 @@
 import os
 import requests
 from dotenv import load_dotenv
-
+import trafilatura
+from bs4 import BeautifulSoup
+import requests
+from playwright.sync_api import sync_playwright
+import json
 
 
 load_dotenv()
@@ -28,6 +32,44 @@ class SerperSearch:
 
 def serper_search():
     return SerperSearch()
+
+
+def scrape_website(url):
+    try:
+        html = requests.get(url).text
+        result = trafilatura.extract(html, with_metadata=True, output_format='json')
+        if result:
+            data = json.loads(result)
+            return data
+        return None
+    except Exception as e:
+        print(f'FAILED TO SCRAPE {url}: {e}')
+
+
+
+def scrape_x_tweets(username, max_tweets):
+    tweets = []
+    with sync_playwright() as p:
+        browser = p.chromium.launch(headless=True)  # Set headless=False to debug visually
+        page = browser.new_page()
+        page.goto(f"https://x.com/{username}", timeout=60000)
+
+        page.wait_for_selector("article", timeout=10000)
+
+        articles = page.locator("article").all()
+        for article in articles[:max_tweets]:
+            try:
+                tweets.append(article.inner_text())
+            except:
+                continue
+
+        browser.close()
+
+    tweet_text = ''
+    for i,tweet in enumerate(tweets):
+        tweet_text += (f"\n--- Tweet {i+1} ---\n{tweet}")
+
+    return tweet_text
 
 
 
